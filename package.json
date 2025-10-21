@@ -2,14 +2,21 @@
   "name": "iota-identity-poc",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "start": "pnpm exec ts-node src/index.ts"
+    "start": "node dist/index.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/node": "^24.9.1",
+    "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@iota/identity-wasm": "1.7.0-beta.1",
+    "@iota/iota-sdk": "^1.6.1"
   }
 }
