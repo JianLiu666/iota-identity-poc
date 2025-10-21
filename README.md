@@ -1,1 +1,1 @@
-# ota-identity-poc
+# iota-identity-poc
