@@ -12,6 +12,8 @@ import {
 import { IotaClient, Network } from '@iota/iota-sdk/client';
 import { getFaucetHost, requestIotaFromFaucetV0 } from '@iota/iota-sdk/faucet';
 
+export const NETWORK_URL = 'https://api.testnet.iota.cafe';
+
 export function getMemStorage(): Storage {
   return new Storage(new JwkMemStore(), new KeyIdMemStore());
 }

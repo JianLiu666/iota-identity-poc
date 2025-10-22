@@ -1,10 +1,10 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage } from './util';
+import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from './util';
 import { IotaDID } from '@iota/identity-wasm/node';
 
 async function createIdentity(): Promise<void> {
   // create new client to connect to IOTA network
-  const iotaClient = new IotaClient({ url: 'https://api.testnet.iota.cafe' });
+  const iotaClient = new IotaClient({ url: NETWORK_URL });
   const network = await iotaClient.getChainIdentifier();
 
   // create new client that offers identity related functions
