@@ -1,7 +1,7 @@
 import { IotaClient } from '@iota/iota-sdk/client';
 import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from './util';
 
-async function deactivateIdentity() {
+async function deleteIdentity() {
   // create new clients and create new account
   const iotaClient = new IotaClient({ url: NETWORK_URL });
   const network = await iotaClient.getChainIdentifier();
@@ -23,35 +23,37 @@ async function deactivateIdentity() {
 
   const controllerToken = await identity.getControllerToken(identityClient);
 
-  // Deactivate the DID.
+  // delete the DID.
   await identity
-    .deactivateDid(controllerToken!)
+    .deleteDid(controllerToken!)
     .withGasBudget(BigInt(50_000_000))
     .buildAndExecute(identityClient);
 
-  // Resolving a deactivated DID returns an empty DID document
-  // with its `deactivated` metadata field set to `true`.
-  let deactivated = await identityClient.resolveDid(did);
-  console.log('Deactivated DID document:', JSON.stringify(deactivated, null, 2));
-  if (deactivated.metadataDeactivated() !== true) {
-    throw new Error('Failed to deactivate DID document');
+  // After an Identity's DID has been deleted, the document will be
+  // empty and inactive. Identity.hasDeletedDid must return `true`.
+  const is_deleted = identity.didDocument().metadata().deactivated() && identity.hasDeletedDid();
+  if (!is_deleted) {
+    throw new Error('failed to delete DID Document');
   }
 
-  // Re-activate the DID by publishing a valid DID document.
-  console.log('Publishing this:', JSON.stringify(resolved, null, 2));
-  await identity
-    .updateDidDocument(resolved, controllerToken!)
-    .withGasBudget(BigInt(50_000_000))
-    .buildAndExecute(identityClient);
+  // Resolving a deleted DID must throw an error.
+  try {
+    let deactivated = await identityClient.resolveDid(did);
+  } catch (_) {
+    console.log(`DID ${did} was successfully deleted!`);
+  }
 
-  // Resolve the reactivated DID document.
-  let resolvedReactivated = await identityClient.resolveDid(did);
-  console.log('Reactivated DID document:', JSON.stringify(resolvedReactivated, null, 2));
-  if (resolvedReactivated.metadataDeactivated() === true) {
-    throw new Error('Failed to reactivate DID document');
+  // Trying to update a deleted DID must fail!
+  try {
+    await identity
+      .updateDidDocument(resolved, controllerToken!)
+      .withGasBudget(BigInt(50_000_000))
+      .buildAndExecute(identityClient);
+  } catch (_) {
+    console.log('A deleted DID cannot be updated!');
   }
 }
 
-deactivateIdentity().catch((error) => {
+deleteIdentity().catch((error) => {
   console.error('Example error:', error);
 });
