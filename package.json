@@ -4,10 +4,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "serve:status": "ts-node src/vc/status_list_registry.ts"
   },
   "devDependencies": {
     "@types/node": "^24.9.1",
