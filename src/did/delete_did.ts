@@ -1,5 +1,5 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from './util';
+import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
 
 async function deleteIdentity() {
   // create new clients and create new account

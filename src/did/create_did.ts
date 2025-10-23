@@ -1,5 +1,5 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from './util';
+import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
 import { IotaDID } from '@iota/identity-wasm/node';
 
 async function createIdentity(): Promise<void> {

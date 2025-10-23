@@ -1,5 +1,5 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from './util';
+import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
 import { CoreDocument, DIDJwk, IToCoreDocument, Resolver } from '@iota/identity-wasm/node';
 
 const DID: string =
