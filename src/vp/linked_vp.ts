@@ -4,7 +4,7 @@ import {
   NotarizationClientReadOnly,
   OnChainNotarization,
 } from '@iota/notarization/node';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
+import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
 import {
   CoreDID,
   Credential,
@@ -34,9 +34,9 @@ async function linkedVp() {
   const network = await iotaClient.getChainIdentifier();
 
   // Create issuer account, create identity, and publish DID document for it
-  const storage = getMemStorage();
-  const identityClient = await getFundedClient(storage);
-  const notarizationClient = await getNotarizationClient(identityClient.signer());
+  const storage = newMemStorage();
+  const identityClient = await newIdentityClient(storage);
+  const notarizationClient = await newNotarizationClient(identityClient.signer());
   const [unpublishedDidDocument, fragment] = await createDocumentForNetwork(storage, network);
   const publishedDidDocument = await identityClient
     .publishDidDocument(unpublishedDidDocument, identityClient.senderAddress())
@@ -150,7 +150,7 @@ async function makeVpJwt(
 
   return jwtVp;
 }
-async function getNotarizationClient(signer: TransactionSigner): Promise<NotarizationClient> {
+async function newNotarizationClient(signer: TransactionSigner): Promise<NotarizationClient> {
   const iotaClient = new IotaClient({ url: NETWORK_URL });
   const notarizationClientReadOnly = await NotarizationClientReadOnly.create(iotaClient);
 

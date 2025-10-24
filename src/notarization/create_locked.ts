@@ -1,13 +1,13 @@
 import { TimeLock } from '@iota/notarization/node';
-import { getMemStorage, getNotarizationClient } from '../util';
+import { newMemStorage, newNotarizationClient } from '../util';
 import assert from 'assert';
 
 async function createLocked() {
   console.log('Creating a simple locked notarization example');
 
   // create a new client that offers notarization related functions
-  const storage = getMemStorage();
-  const notarizationClient = await getNotarizationClient(storage);
+  const storage = newMemStorage();
+  const notarizationClient = await newNotarizationClient(storage);
 
   // Calculate an unlock time (24 hours from now) to be used for deleteLock
   const delete_unlock_at = Math.round(Date.now() / 1000 + 86400); // 24 hours

@@ -15,7 +15,7 @@ import { NotarizationClient, NotarizationClientReadOnly } from '@iota/notarizati
 
 export const NETWORK_URL = 'https://api.testnet.iota.cafe';
 
-export function getMemStorage(): Storage {
+export function newMemStorage(): Storage {
   return new Storage(new JwkMemStore(), new KeyIdMemStore());
 }
 
@@ -43,7 +43,7 @@ export async function requestFunds(address: string) {
   });
 }
 
-export async function getFundedClient(storage: Storage): Promise<IdentityClient> {
+export async function newIdentityClient(storage: Storage): Promise<IdentityClient> {
   const iotaClient = new IotaClient({ url: NETWORK_URL });
 
   const identityClientReadOnly = await IdentityClientReadOnly.create(iotaClient);
@@ -75,7 +75,7 @@ export async function getFundedClient(storage: Storage): Promise<IdentityClient>
   return identityClient;
 }
 
-export async function getNotarizationClient(storage: Storage): Promise<NotarizationClient> {
+export async function newNotarizationClient(storage: Storage): Promise<NotarizationClient> {
   const iotaClient = new IotaClient({ url: NETWORK_URL });
 
   const notarizationClientReadOnly = await NotarizationClientReadOnly.create(iotaClient);

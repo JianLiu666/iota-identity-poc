@@ -1,5 +1,5 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
+import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
 import { IotaDID } from '@iota/identity-wasm/node';
 
 async function createIdentity(): Promise<void> {
@@ -8,8 +8,8 @@ async function createIdentity(): Promise<void> {
   const network = await iotaClient.getChainIdentifier();
 
   // create new client that offers identity related functions
-  const storage = getMemStorage();
-  const identityClient = await getFundedClient(storage);
+  const storage = newMemStorage();
+  const identityClient = await newIdentityClient(storage);
 
   // create new unpublished document
   const [unpublished] = await createDocumentForNetwork(storage, network);

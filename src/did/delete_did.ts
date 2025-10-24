@@ -1,12 +1,12 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
+import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
 
 async function deleteIdentity() {
   // create new clients and create new account
   const iotaClient = new IotaClient({ url: NETWORK_URL });
   const network = await iotaClient.getChainIdentifier();
-  const storage = getMemStorage();
-  const identityClient = await getFundedClient(storage);
+  const storage = newMemStorage();
+  const identityClient = await newIdentityClient(storage);
   const [unpublished] = await createDocumentForNetwork(storage, network);
 
   // create new identity for this account and publish document for it

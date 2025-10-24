@@ -1,5 +1,5 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
+import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
 import {
   CoreDID,
   Credential,
@@ -32,8 +32,8 @@ async function createVp() {
   const network = await iotaClient.getChainIdentifier();
 
   // create issuer account, create identity, and publish DID document for it
-  const issuerStorage = getMemStorage();
-  const issuerClient = await getFundedClient(issuerStorage);
+  const issuerStorage = newMemStorage();
+  const issuerClient = await newIdentityClient(issuerStorage);
   const [unpublishedIssuerDocument, issuerFragment] = await createDocumentForNetwork(
     issuerStorage,
     network,
@@ -47,8 +47,8 @@ async function createVp() {
   console.log(`Resolved Issuer document: ${JSON.stringify(resolvedIssuer, null, 2)}`);
 
   // create holder account, create identity, and publish DID document for it
-  const aliceStorage = getMemStorage();
-  const aliceClient = await getFundedClient(aliceStorage);
+  const aliceStorage = newMemStorage();
+  const aliceClient = await newIdentityClient(aliceStorage);
   const [unpublishedAliceDocument, aliceFragment] = await createDocumentForNetwork(
     aliceStorage,
     network,

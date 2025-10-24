@@ -1,5 +1,5 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
+import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
 import {
   Credential,
   EdDSAJwsVerifier,
@@ -25,8 +25,8 @@ async function revokeVCByRevocationBitmap() {
   const network = await iotaClient.getChainIdentifier();
 
   // Create an identity for the issuer with one verification method `key-1`, and publish DID document for it.
-  const issuerStorage = getMemStorage();
-  const issuerClient = await getFundedClient(issuerStorage);
+  const issuerStorage = newMemStorage();
+  const issuerClient = await newIdentityClient(issuerStorage);
   const [unpublishedIssuerDocument, issuerFragment] = await createDocumentForNetwork(
     issuerStorage,
     network,
@@ -40,8 +40,8 @@ async function revokeVCByRevocationBitmap() {
   console.log(`Resolved Issuer document: ${JSON.stringify(resolvedIssuer, null, 2)}`);
 
   // create holder account, create identity, and publish DID document for it.
-  const aliceStorage = getMemStorage();
-  const aliceClient = await getFundedClient(aliceStorage);
+  const aliceStorage = newMemStorage();
+  const aliceClient = await newIdentityClient(aliceStorage);
   const [unpublishedAliceDocument, aliceFragment] = await createDocumentForNetwork(
     aliceStorage,
     network,

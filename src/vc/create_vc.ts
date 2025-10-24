@@ -1,5 +1,5 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, getFundedClient, getMemStorage, NETWORK_URL } from '../util';
+import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
 import {
   JwsSignatureOptions,
   Credential,
@@ -15,8 +15,8 @@ async function createVC() {
   const network = await iotaClient.getChainIdentifier();
 
   // Create an identity for the issuer with one verification method `key-1`, and publish DID document for it.
-  const issuerStorage = getMemStorage();
-  const issuerClient = await getFundedClient(issuerStorage);
+  const issuerStorage = newMemStorage();
+  const issuerClient = await newIdentityClient(issuerStorage);
   const [unpublishedIssuerDocument, issuerFragment] = await createDocumentForNetwork(
     issuerStorage,
     network,
@@ -30,8 +30,8 @@ async function createVC() {
   console.log(`Resolved Issuer document: ${JSON.stringify(resolvedIssuer, null, 2)}`);
 
   // Create an identity for the holder, and publish DID document for it, in this case also the subject.
-  const holderStorage = getMemStorage();
-  const holderClient = await getFundedClient(holderStorage);
+  const holderStorage = newMemStorage();
+  const holderClient = await newIdentityClient(holderStorage);
   const [unpublishedHolderDocument] = await createDocumentForNetwork(holderStorage, network);
   const { output: holderIdentity } = await holderClient
     .createIdentity(unpublishedHolderDocument)
