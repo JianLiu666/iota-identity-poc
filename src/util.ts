@@ -11,6 +11,7 @@ import {
 } from '@iota/identity-wasm/node';
 import { IotaClient, Network } from '@iota/iota-sdk/client';
 import { getFaucetHost, requestIotaFromFaucetV0 } from '@iota/iota-sdk/faucet';
+import { NotarizationClient, NotarizationClientReadOnly } from '@iota/notarization/node';
 
 export const NETWORK_URL = 'https://api.testnet.iota.cafe';
 
@@ -43,11 +44,9 @@ export async function requestFunds(address: string) {
 }
 
 export async function getFundedClient(storage: Storage): Promise<IdentityClient> {
-  const iotaClient = new IotaClient({
-    url: 'https://api.testnet.iota.cafe',
-  });
+  const iotaClient = new IotaClient({ url: NETWORK_URL });
 
-  const identityClientReadOnly = await IdentityClientReadOnly.create(iotaClient as unknown as any);
+  const identityClientReadOnly = await IdentityClientReadOnly.create(iotaClient);
 
   // generate new key
   let generate = await storage.keyStorage().generate('Ed25519', JwsAlgorithm.EdDSA);
@@ -74,4 +73,36 @@ export async function getFundedClient(storage: Storage): Promise<IdentityClient>
   }
 
   return identityClient;
+}
+
+export async function getNotarizationClient(storage: Storage): Promise<NotarizationClient> {
+  const iotaClient = new IotaClient({ url: NETWORK_URL });
+
+  const notarizationClientReadOnly = await NotarizationClientReadOnly.create(iotaClient);
+
+  // generate new key
+  let generate = await storage.keyStorage().generate('Ed25519', JwsAlgorithm.EdDSA);
+
+  let publicKeyJwk = generate.jwk().toPublic();
+  if (typeof publicKeyJwk === 'undefined') {
+    throw new Error('failed to derive public key JWK from generated JWK');
+  }
+  let keyId = generate.keyId();
+
+  // create signer
+  let signer = new StorageSigner(storage, keyId, publicKeyJwk);
+  const notarizationClient = await NotarizationClient.create(notarizationClientReadOnly, signer);
+
+  await requestFunds(notarizationClient.senderAddress());
+
+  const balance = await iotaClient.getBalance({ owner: notarizationClient.senderAddress() });
+  if (balance.totalBalance === '0') {
+    throw new Error('Balance is still 0');
+  } else {
+    console.log(
+      `Received gas from faucet: ${balance.totalBalance} for owner ${notarizationClient.senderAddress()}`,
+    );
+  }
+
+  return notarizationClient;
 }
