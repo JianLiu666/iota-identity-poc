@@ -126,7 +126,7 @@ async function poc() {
 
   // issuer send vc hash value on-chain with notarization
   const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY);
-  const { output: notarization, response: response } = await notarizationClient
+  const { output: notarization } = await notarizationClient
     .createLocked()
     .withStringState(jwtPart, 'Example VC JWT part')
     .withImmutableDescription('This can not be changed any more')
@@ -135,6 +135,19 @@ async function poc() {
 
   console.log('Notarization:');
   console.log(notarization);
+}
+
+async function destroyNotarization(notarizationId: string): Promise<void> {
+  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY);
+  const notarizationClientReadOnly = notarizationClient.readOnly();
+
+  console.log(`Destroying notarization with ID: ${notarizationId}`);
+
+  const isDestroyAllowed = await notarizationClientReadOnly.isDestroyAllowed(notarizationId);
+  console.log(`Is Notarization destroy allowed: ${isDestroyAllowed}`);
+
+  await notarizationClient.destroy(notarizationId).buildAndExecute(notarizationClient);
+  console.log('Notarization destroyed successfully');
 }
 
 async function createIdentity(): Promise<[IotaDocument, string]> {
