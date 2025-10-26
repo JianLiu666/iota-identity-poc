@@ -121,10 +121,9 @@ export async function newIdentityClient(storage: Storage): Promise<IdentityClien
   return identityClient;
 }
 
-export async function getIdentityClient(base64SecretKey: string): Promise<{
-  identityClient: IdentityClient;
-  storage: Storage;
-}> {
+export async function newIdentityClientFromSecretKey(
+  base64SecretKey: string,
+): Promise<[IdentityClient, Storage, string]> {
   const iotaClient = new IotaClient({ url: NETWORK_URL });
   const identityClientReadOnly = await IdentityClientReadOnly.create(iotaClient);
 
@@ -165,7 +164,7 @@ export async function getIdentityClient(base64SecretKey: string): Promise<{
   }
   console.log(`Current balance: ${current.toString()} for owner ${identityClient.senderAddress()}`);
 
-  return { identityClient, storage };
+  return [identityClient, storage, keyId];
 }
 
 export async function newNotarizationClient(storage: Storage): Promise<NotarizationClient> {
@@ -196,6 +195,53 @@ export async function newNotarizationClient(storage: Storage): Promise<Notarizat
       `Received gas from faucet: ${balance.totalBalance} for owner ${notarizationClient.senderAddress()}`,
     );
   }
+
+  return notarizationClient;
+}
+
+export async function newNotarizationClientFromSecretKey(base64SecretKey: string) {
+  const iotaClient = new IotaClient({ url: NETWORK_URL });
+  const notarizationClientReadOnly = await NotarizationClientReadOnly.create(iotaClient);
+
+  const storage = newMemStorage();
+
+  const keypair = getEd25519KeypairFromBase64SecretKey(base64SecretKey);
+  const { secretKey } = decodeIotaPrivateKey(keypair.getSecretKey());
+  const publicKey = keypair.getPublicKey().toRawBytes();
+
+  const jwk = new Jwk({
+    kty: JwkType.Okp,
+    use: JwkUse.Signature,
+    key_ops: [JwkOperation.Sign, JwkOperation.Verify],
+    crv: EdCurve.Ed25519,
+    x: Buffer.from(publicKey).toString('base64url'),
+    d: Buffer.from(secretKey).toString('base64url'),
+    alg: JwsAlgorithm.EdDSA,
+  });
+
+  const keyId = await storage.keyStorage().insert(jwk);
+  const publicKeyJwk = jwk.toPublic();
+  if (typeof publicKeyJwk === 'undefined') {
+    throw new Error('failed to derive public key JWK from inserted JWK');
+  }
+
+  // create signer
+  let signer = new StorageSigner(storage, keyId, publicKeyJwk);
+  const notarizationClient = await NotarizationClient.create(notarizationClientReadOnly, signer);
+
+  let bal = await iotaClient.getBalance({ owner: notarizationClient.senderAddress() });
+  let current = BigInt(bal.totalBalance);
+  if (current < ONE_IOTA) {
+    await requestFunds(notarizationClient.senderAddress());
+    bal = await iotaClient.getBalance({ owner: notarizationClient.senderAddress() });
+    current = BigInt(bal.totalBalance);
+    if (current < ONE_IOTA) {
+      throw new Error('Balance is still below 1 IOTA after faucet');
+    }
+  }
+  console.log(
+    `Current balance: ${current.toString()} for owner ${notarizationClient.senderAddress()}`,
+  );
 
   return notarizationClient;
 }
