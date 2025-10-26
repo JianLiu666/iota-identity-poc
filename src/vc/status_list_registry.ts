@@ -2,7 +2,6 @@ import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { readFile, writeFile, mkdir, access } from 'fs/promises';
 import { constants as fsConstants } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 const DEFAULT_PORT = Number(process.env.STATUS_LIST_PORT ?? 8787);
 const DEFAULT_HOST = process.env.STATUS_LIST_HOST ?? '0.0.0.0';

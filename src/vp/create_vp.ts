@@ -1,5 +1,5 @@
 import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
+import { newIdentityClient, newMemStorage, createDocument, NETWORK_URL } from '../util';
 import {
   CoreDID,
   Credential,
@@ -29,15 +29,11 @@ async function createVp() {
 
   // create new client to connect to IOTA network
   const iotaClient = new IotaClient({ url: NETWORK_URL });
-  const network = await iotaClient.getChainIdentifier();
 
   // create issuer account, create identity, and publish DID document for it
   const issuerStorage = newMemStorage();
   const issuerClient = await newIdentityClient(issuerStorage);
-  const [unpublishedIssuerDocument, issuerFragment] = await createDocumentForNetwork(
-    issuerStorage,
-    network,
-  );
+  const [unpublishedIssuerDocument, issuerFragment] = await createDocument(issuerStorage);
   const { output: issuerIdentity } = await issuerClient
     .createIdentity(unpublishedIssuerDocument)
     .finish()
@@ -49,10 +45,7 @@ async function createVp() {
   // create holder account, create identity, and publish DID document for it
   const aliceStorage = newMemStorage();
   const aliceClient = await newIdentityClient(aliceStorage);
-  const [unpublishedAliceDocument, aliceFragment] = await createDocumentForNetwork(
-    aliceStorage,
-    network,
-  );
+  const [unpublishedAliceDocument, aliceFragment] = await createDocument(aliceStorage);
   const { output: aliceIdentity } = await aliceClient
     .createIdentity(unpublishedAliceDocument)
     .finish()

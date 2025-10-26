@@ -4,7 +4,7 @@ import {
   NotarizationClientReadOnly,
   OnChainNotarization,
 } from '@iota/notarization/node';
-import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
+import { createDocument, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
 import {
   CoreDID,
   Credential,
@@ -37,7 +37,7 @@ async function linkedVp() {
   const storage = newMemStorage();
   const identityClient = await newIdentityClient(storage);
   const notarizationClient = await newNotarizationClient(identityClient.signer());
-  const [unpublishedDidDocument, fragment] = await createDocumentForNetwork(storage, network);
+  const [unpublishedDidDocument, fragment] = await createDocument(storage);
   const publishedDidDocument = await identityClient
     .publishDidDocument(unpublishedDidDocument, identityClient.senderAddress())
     .buildAndExecute(identityClient)

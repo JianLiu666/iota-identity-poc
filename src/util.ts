@@ -8,31 +8,37 @@ import {
   JwkType,
   KeyIdMemStore,
   MethodScope,
+  MethodDigest,
   Storage,
   StorageSigner,
   JwkUse,
   EdCurve,
   JwkOperation,
+  VerificationMethod,
 } from '@iota/identity-wasm/node';
-import { IotaClient, Network } from '@iota/iota-sdk/client';
+import { getNetwork, IotaClient, Network } from '@iota/iota-sdk/client';
 import { getFaucetHost, requestIotaFromFaucetV0 } from '@iota/iota-sdk/faucet';
 import { NotarizationClient, NotarizationClientReadOnly } from '@iota/notarization/node';
 import { Ed25519Keypair } from '@iota/iota-sdk/keypairs/ed25519';
 import { decodeIotaPrivateKey } from '@iota/iota-sdk/cryptography';
 
-export const NETWORK_URL = 'https://api.testnet.iota.cafe';
-const ONE_IOTA = 1_000_000_000n; // base units
+export const NETWORK = Network.Testnet;
+export const NETWORK_URL = getNetwork(NETWORK).url;
+export const ONE_IOTA = 1_000_000_000n; // base units
+
+export async function requestFunds(address: string) {
+  await requestIotaFromFaucetV0({
+    host: getFaucetHost(NETWORK),
+    recipient: address,
+  });
+}
 
 export function newMemStorage(): Storage {
   return new Storage(new JwkMemStore(), new KeyIdMemStore());
 }
 
-export async function createDocumentForNetwork(
-  storage: Storage,
-  network: string,
-): Promise<[IotaDocument, string]> {
-  // Create a new DID document with a placeholder DID.
-  const unpublished = new IotaDocument(network);
+export async function createDocument(storage: Storage): Promise<[IotaDocument, string]> {
+  const unpublished = new IotaDocument(NETWORK);
   const verificationMethodFragment = await unpublished.generateMethod(
     storage,
     JwkMemStore.ed25519KeyType(),
@@ -44,11 +50,43 @@ export async function createDocumentForNetwork(
   return [unpublished, verificationMethodFragment];
 }
 
-export async function requestFunds(address: string) {
-  await requestIotaFromFaucetV0({
-    host: getFaucetHost(Network.Testnet),
-    recipient: address,
+export async function createDocumentWithKey(
+  storage: Storage,
+  base64SecretKey: string,
+  fragment: string = '#key-1',
+): Promise<[IotaDocument, string]> {
+  const unpublished = new IotaDocument(NETWORK);
+
+  // Build a JWK from the provided secret key and insert it into storage to obtain keyId.
+  const keypair = getEd25519KeypairFromBase64SecretKey(base64SecretKey);
+  const { secretKey } = decodeIotaPrivateKey(keypair.getSecretKey());
+  const publicKey = keypair.getPublicKey().toRawBytes();
+
+  const jwk = new Jwk({
+    kty: JwkType.Okp,
+    use: JwkUse.Signature,
+    key_ops: [JwkOperation.Sign, JwkOperation.Verify],
+    crv: EdCurve.Ed25519,
+    x: Buffer.from(publicKey).toString('base64url'),
+    d: Buffer.from(secretKey).toString('base64url'),
+    alg: JwsAlgorithm.EdDSA,
   });
+
+  const keyId = await storage.keyStorage().insert(jwk);
+  const publicKeyJwk = jwk.toPublic();
+  if (typeof publicKeyJwk === 'undefined') {
+    throw new Error('failed to derive public key JWK from inserted JWK');
+  }
+
+  // Create a verification method from the public JWK and insert it into the document.
+  const method = VerificationMethod.newFromJwk(unpublished.id(), publicKeyJwk, fragment);
+  unpublished.insertMethod(method, MethodScope.VerificationMethod());
+
+  // Map the inserted verification method to the keyId in KeyIdMemStore so it can be used for createJws.
+  const methodDigest = new MethodDigest(method);
+  await storage.keyIdStorage().insertKeyId(methodDigest, keyId);
+
+  return [unpublished, method.id().fragment()!];
 }
 
 export async function newIdentityClient(storage: Storage): Promise<IdentityClient> {
@@ -83,7 +121,10 @@ export async function newIdentityClient(storage: Storage): Promise<IdentityClien
   return identityClient;
 }
 
-export async function getIdentityClient(base64SecretKey: string): Promise<IdentityClient> {
+export async function getIdentityClient(base64SecretKey: string): Promise<{
+  identityClient: IdentityClient;
+  storage: Storage;
+}> {
   const iotaClient = new IotaClient({ url: NETWORK_URL });
   const identityClientReadOnly = await IdentityClientReadOnly.create(iotaClient);
 
@@ -124,7 +165,7 @@ export async function getIdentityClient(base64SecretKey: string): Promise<Identi
   }
   console.log(`Current balance: ${current.toString()} for owner ${identityClient.senderAddress()}`);
 
-  return identityClient;
+  return { identityClient, storage };
 }
 
 export async function newNotarizationClient(storage: Storage): Promise<NotarizationClient> {

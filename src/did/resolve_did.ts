@@ -1,17 +1,9 @@
-import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
-import { CoreDocument, DIDJwk, IToCoreDocument, Resolver } from '@iota/identity-wasm/node';
-
-const DID: string =
-  'did:iota:testnet:0xbf8b466d396802791cf5866baaba5de1c749507205a575df58ce358c5f5a7e45';
+import { createDocument, newIdentityClient, newMemStorage } from '../util';
 
 async function resolveIdentity() {
-  // create new clients and create new account
-  const iotaClient = new IotaClient({ url: NETWORK_URL });
-  const network = await iotaClient.getChainIdentifier();
   const storage = newMemStorage();
   const identityClient = await newIdentityClient(storage);
-  const [unpublished] = await createDocumentForNetwork(storage, network);
+  const [unpublished] = await createDocument(storage);
 
   // create new identity for this account and publish document for it
   const { output: identity } = await identityClient

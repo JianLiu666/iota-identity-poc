@@ -1,5 +1,4 @@
-import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
+import { createDocument, newIdentityClient, newMemStorage } from '../util';
 import {
   JwsSignatureOptions,
   Credential,
@@ -10,17 +9,10 @@ import {
 } from '@iota/identity-wasm/node';
 
 async function createVC() {
-  // create new client to connect to IOTA network
-  const iotaClient = new IotaClient({ url: NETWORK_URL });
-  const network = await iotaClient.getChainIdentifier();
-
   // Create an identity for the issuer with one verification method `key-1`, and publish DID document for it.
   const issuerStorage = newMemStorage();
   const issuerClient = await newIdentityClient(issuerStorage);
-  const [unpublishedIssuerDocument, issuerFragment] = await createDocumentForNetwork(
-    issuerStorage,
-    network,
-  );
+  const [unpublishedIssuerDocument, issuerFragment] = await createDocument(issuerStorage);
   const { output: issuerIdentity } = await issuerClient
     .createIdentity(unpublishedIssuerDocument)
     .finish()
@@ -32,7 +24,7 @@ async function createVC() {
   // Create an identity for the holder, and publish DID document for it, in this case also the subject.
   const holderStorage = newMemStorage();
   const holderClient = await newIdentityClient(holderStorage);
-  const [unpublishedHolderDocument] = await createDocumentForNetwork(holderStorage, network);
+  const [unpublishedHolderDocument] = await createDocument(holderStorage);
   const { output: holderIdentity } = await holderClient
     .createIdentity(unpublishedHolderDocument)
     .finish()

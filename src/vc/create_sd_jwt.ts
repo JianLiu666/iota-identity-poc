@@ -1,5 +1,4 @@
-import { IotaClient } from '@iota/iota-sdk/client';
-import { createDocumentForNetwork, newIdentityClient, newMemStorage, NETWORK_URL } from '../util';
+import { createDocument, newIdentityClient, newMemStorage } from '../util';
 import {
   Credential,
   DecodedJwtCredential,
@@ -21,18 +20,11 @@ async function createSdJwt() {
   // Step 1: Create identities for the issuer and the holder.
   // ===========================================================================
 
-  // create new client to connect to IOTA network
-  const iotaClient = new IotaClient({ url: NETWORK_URL });
-  const network = await iotaClient.getChainIdentifier();
-
   // Creates a new wallet and identity (see "0_create_did" example).
   // Create an identity for the issuer with one verification method `key-1`, and publish DID document for it.
   const issuerStorage = newMemStorage();
   const issuerClient = await newIdentityClient(issuerStorage);
-  const [unpublishedIssuerDocument, issuerFragment] = await createDocumentForNetwork(
-    issuerStorage,
-    network,
-  );
+  const [unpublishedIssuerDocument, issuerFragment] = await createDocument(issuerStorage);
   const { output: issuerIdentity } = await issuerClient
     .createIdentity(unpublishedIssuerDocument)
     .finish()
@@ -44,10 +36,7 @@ async function createSdJwt() {
   // Create an identity for the holder, and publish DID document for it, in this case also the subject.
   const aliceStorage = newMemStorage();
   const aliceClient = await newIdentityClient(aliceStorage);
-  const [unpublishedAliceDocument, aliceFragment] = await createDocumentForNetwork(
-    aliceStorage,
-    network,
-  );
+  const [unpublishedAliceDocument, aliceFragment] = await createDocument(aliceStorage);
   const { output: aliceIdentity } = await aliceClient
     .createIdentity(unpublishedAliceDocument)
     .finish()
