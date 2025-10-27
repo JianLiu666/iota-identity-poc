@@ -17,6 +17,7 @@ import {
   Service,
   Storage,
   MethodDigest,
+  LinkedDomainService,
 } from '@iota/identity-wasm/node';
 
 const ISSUER_SECRET_KEY = 'd3gsWPcEkyg2YklJSpAy0tje2vYY9ZU-hrh5Wfai4m8';
@@ -163,7 +164,8 @@ async function createIdentity(): Promise<[IotaDocument, string]> {
     .buildAndExecute(client);
   const document = identity.didDocument();
 
-  await createService(client, document, 'revocation-service-1');
+  await createRevocationBitmapService(client, document, 'revocation-service-1');
+  await createLinkedDomainService(client, document);
 
   const resolved = await client.resolveDid(document.id());
   console.log(`Resolved document: ${JSON.stringify(resolved, null, 2)}`);
@@ -178,7 +180,11 @@ function generateSecretKey(): string {
   return secretKeyBase64url;
 }
 
-async function createService(client: IdentityClient, document: IotaDocument, fragment: string) {
+async function createRevocationBitmapService(
+  client: IdentityClient,
+  document: IotaDocument,
+  fragment: string,
+) {
   const resolvedIdentity = await client.getIdentity(document.id().toString().split(':').pop()!);
   const onChainIdentity = resolvedIdentity.toFullFledged();
   if (!onChainIdentity) {
@@ -192,6 +198,29 @@ async function createService(client: IdentityClient, document: IotaDocument, fra
   const serviceId = document.id().join(`#${fragment}`);
   const service: Service = revocationBitmap.toService(serviceId);
   document.insertService(service);
+
+  const controllerToken = await onChainIdentity.getControllerToken(client);
+
+  // Publish the updated document.
+  await onChainIdentity
+    .updateDidDocument(document, controllerToken!)
+    .withGasBudget(BigInt(50_000_000))
+    .buildAndExecute(client);
+}
+
+async function createLinkedDomainService(client: IdentityClient, document: IotaDocument) {
+  const resolvedIdentity = await client.getIdentity(document.id().toString().split(':').pop()!);
+  const onChainIdentity = resolvedIdentity.toFullFledged();
+  if (!onChainIdentity) {
+    throw new Error('On-chain identity not found');
+  }
+
+  const serviceUrl = document.id().clone().join('#domain_linkage');
+  const linkedDomainService: LinkedDomainService = new LinkedDomainService({
+    id: serviceUrl,
+    domains: ['https://foo.example.com', 'https://bar.example.com'],
+  });
+  document.insertService(linkedDomainService.toService());
 
   const controllerToken = await onChainIdentity.getControllerToken(client);
 
