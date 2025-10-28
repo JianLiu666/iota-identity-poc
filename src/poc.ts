@@ -19,6 +19,7 @@ import {
   MethodDigest,
   LinkedDomainService,
 } from '@iota/identity-wasm/node';
+import { DefaultHttpClient, GasStationParams } from '@iota/notarization/node';
 
 const ISSUER_SECRET_KEY = 'd3gsWPcEkyg2YklJSpAy0tje2vYY9ZU-hrh5Wfai4m8';
 const ISSUER_DID =
@@ -127,12 +128,27 @@ async function poc() {
 
   // issuer send vc hash value on-chain with notarization
   const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY);
+
   const { output: notarization } = await notarizationClient
     .createLocked()
     .withStringState(jwtPart, 'Example VC JWT part')
     .withImmutableDescription('This can not be changed any more')
     .finish()
     .buildAndExecute(notarizationClient);
+
+  // const httpClient = new DefaultHttpClient();
+  // const gasStationOptions = new GasStationParams().withAuthToken('jian');
+  // const { output: notarization } = await notarizationClient
+  //   .createLocked()
+  //   .withStringState(jwtPart, 'Example VC JWT part')
+  //   .withImmutableDescription('This can not be changed any more')
+  //   .finish()
+  //   .executeWithGasStation(
+  //     notarizationClient,
+  //     'http://localhost:9527',
+  //     httpClient,
+  //     gasStationOptions,
+  //   );
 
   console.log('Notarization:');
   console.log(notarization);
