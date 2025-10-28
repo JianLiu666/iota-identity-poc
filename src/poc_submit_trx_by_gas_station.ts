@@ -178,6 +178,7 @@ async function createIdentity(): Promise<[IotaDocument, string]> {
     .createIdentity(unpublishedDocument)
     .finish()
     .buildAndExecute(client);
+
   const document = identity.didDocument();
 
   await createRevocationBitmapService(client, document, 'revocation-service-1');
