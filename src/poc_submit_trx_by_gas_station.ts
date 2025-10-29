@@ -18,15 +18,20 @@ import {
   Storage,
   MethodDigest,
   LinkedDomainService,
+  DefaultHttpClient as IdentityDefaultHttpClient,
+  GasStationParams as IdentityGasStationParams,
 } from '@iota/identity-wasm/node';
-import { DefaultHttpClient, GasStationParams } from '@iota/notarization/node';
+import {
+  DefaultHttpClient as NotarizationDefaultHttpClient,
+  GasStationParams as NotarizationGasStationParams,
+} from '@iota/notarization/node';
 
-const ISSUER_SECRET_KEY = 'd3gsWPcEkyg2YklJSpAy0tje2vYY9ZU-hrh5Wfai4m8';
+const ISSUER_SECRET_KEY = 'ZRx8WOO5ZazFsRwkMdey1PnNKyATpKQGrAEiA1qYASU';
 const ISSUER_DID =
-  'did:iota:testnet:0x98628fa07f9abc09cab6c58f1a64514cf6e995d722054c0be789c7a82e3b92f2';
-const HOLDER_SECRET_KEY = 'X1XL9s24-_HzcvuuuwBb5SY7Khlj2rJLbWV6sJsVy4w';
+  'did:iota:testnet:0x090a13ca46fedf341503cb4a0e7e45a92c59f519d4658faf5b2a0d3e526e286a';
+const HOLDER_SECRET_KEY = '34Qb87rvuRlcqSkjJARdbPIsKmxWgQOYOjpu_5zQlec';
 const HOLDER_DID =
-  'did:iota:testnet:0xad37a77073d0752cc4a22a670b94547f9a9972c7242bac023e0c356333fc0bc4';
+  'did:iota:testnet:0x14d4e454b7f55de5e3fd616c61068476417a638752210f0f8b11303b1e705742';
 
 async function poc() {
   console.log('===========================================================================');
@@ -127,35 +132,25 @@ async function poc() {
   console.log('===========================================================================');
 
   // issuer send vc hash value on-chain with notarization
-  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY);
-
+  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY, false);
   const { output: notarization } = await notarizationClient
     .createLocked()
     .withStringState(jwtPart, 'Example VC JWT part')
     .withImmutableDescription('This can not be changed any more')
     .finish()
-    .buildAndExecute(notarizationClient);
-
-  // const httpClient = new DefaultHttpClient();
-  // const gasStationOptions = new GasStationParams().withAuthToken('jian');
-  // const { output: notarization } = await notarizationClient
-  //   .createLocked()
-  //   .withStringState(jwtPart, 'Example VC JWT part')
-  //   .withImmutableDescription('This can not be changed any more')
-  //   .finish()
-  //   .executeWithGasStation(
-  //     notarizationClient,
-  //     'http://localhost:9527',
-  //     httpClient,
-  //     gasStationOptions,
-  //   );
+    .executeWithGasStation(
+      notarizationClient,
+      'http://localhost:9527',
+      new NotarizationDefaultHttpClient(),
+      new NotarizationGasStationParams().withAuthToken('jian'),
+    );
 
   console.log('Notarization:');
   console.log(notarization);
 }
 
 async function destroyNotarization(notarizationId: string): Promise<void> {
-  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY);
+  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY, false);
   const notarizationClientReadOnly = notarizationClient.readOnly();
 
   console.log(`Destroying notarization with ID: ${notarizationId}`);
@@ -163,7 +158,14 @@ async function destroyNotarization(notarizationId: string): Promise<void> {
   const isDestroyAllowed = await notarizationClientReadOnly.isDestroyAllowed(notarizationId);
   console.log(`Is Notarization destroy allowed: ${isDestroyAllowed}`);
 
-  await notarizationClient.destroy(notarizationId).buildAndExecute(notarizationClient);
+  await notarizationClient
+    .destroy(notarizationId)
+    .executeWithGasStation(
+      notarizationClient,
+      'http://localhost:9527',
+      new NotarizationDefaultHttpClient(),
+      new NotarizationGasStationParams().withAuthToken('jian'),
+    );
   console.log('Notarization destroyed successfully');
 }
 
@@ -171,13 +173,18 @@ async function createIdentity(): Promise<[IotaDocument, string]> {
   const secretKey = generateSecretKey();
   console.log(`Secret key: ${secretKey}`);
 
-  const [client, storage] = await newIdentityClientFromSecretKey(secretKey);
+  const [client, storage] = await newIdentityClientFromSecretKey(secretKey, false);
 
   const [unpublishedDocument, fragment] = await createDocumentWithKey(storage, secretKey, '#key-1');
   const { output: identity } = await client
     .createIdentity(unpublishedDocument)
     .finish()
-    .buildAndExecute(client);
+    .executeWithGasStation(
+      client,
+      'http://localhost:9527',
+      new IdentityDefaultHttpClient(),
+      new IdentityGasStationParams().withAuthToken('jian'),
+    );
 
   const document = identity.didDocument();
 
@@ -221,8 +228,12 @@ async function createRevocationBitmapService(
   // Publish the updated document.
   await onChainIdentity
     .updateDidDocument(document, controllerToken!)
-    .withGasBudget(BigInt(50_000_000))
-    .buildAndExecute(client);
+    .executeWithGasStation(
+      client,
+      'http://localhost:9527',
+      new IdentityDefaultHttpClient(),
+      new IdentityGasStationParams().withAuthToken('jian'),
+    );
 }
 
 async function createLinkedDomainService(client: IdentityClient, document: IotaDocument) {
@@ -244,15 +255,19 @@ async function createLinkedDomainService(client: IdentityClient, document: IotaD
   // Publish the updated document.
   await onChainIdentity
     .updateDidDocument(document, controllerToken!)
-    .withGasBudget(BigInt(50_000_000))
-    .buildAndExecute(client);
+    .executeWithGasStation(
+      client,
+      'http://localhost:9527',
+      new IdentityDefaultHttpClient(),
+      new IdentityGasStationParams().withAuthToken('jian'),
+    );
 }
 
 async function getIdentity(
   base64SecretKey: string,
   did: string,
 ): Promise<[IdentityClient, Storage, IotaDocument, string]> {
-  const [client, storage, keyId] = await newIdentityClientFromSecretKey(base64SecretKey);
+  const [client, storage, keyId] = await newIdentityClientFromSecretKey(base64SecretKey, false);
   const document = await client.resolveDid(IotaDID.parse(did));
 
   const method = document.methods()[0];

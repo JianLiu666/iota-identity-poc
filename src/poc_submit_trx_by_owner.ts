@@ -126,7 +126,7 @@ async function poc() {
   console.log('===========================================================================');
 
   // issuer send vc hash value on-chain with notarization
-  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY);
+  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY, true);
 
   const { output: notarization } = await notarizationClient
     .createLocked()
@@ -140,7 +140,7 @@ async function poc() {
 }
 
 async function destroyNotarization(notarizationId: string): Promise<void> {
-  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY);
+  const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY, true);
   const notarizationClientReadOnly = notarizationClient.readOnly();
 
   console.log(`Destroying notarization with ID: ${notarizationId}`);
@@ -156,7 +156,7 @@ async function createIdentity(): Promise<[IotaDocument, string]> {
   const secretKey = generateSecretKey();
   console.log(`Secret key: ${secretKey}`);
 
-  const [client, storage] = await newIdentityClientFromSecretKey(secretKey);
+  const [client, storage] = await newIdentityClientFromSecretKey(secretKey, true);
 
   const [unpublishedDocument, fragment] = await createDocumentWithKey(storage, secretKey, '#key-1');
   const { output: identity } = await client
@@ -236,7 +236,7 @@ async function getIdentity(
   base64SecretKey: string,
   did: string,
 ): Promise<[IdentityClient, Storage, IotaDocument, string]> {
-  const [client, storage, keyId] = await newIdentityClientFromSecretKey(base64SecretKey);
+  const [client, storage, keyId] = await newIdentityClientFromSecretKey(base64SecretKey, true);
   const document = await client.resolveDid(IotaDID.parse(did));
 
   const method = document.methods()[0];

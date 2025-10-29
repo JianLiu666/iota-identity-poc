@@ -123,6 +123,7 @@ export async function newIdentityClient(storage: Storage): Promise<IdentityClien
 
 export async function newIdentityClientFromSecretKey(
   base64SecretKey: string,
+  checkBalance: boolean = false,
 ): Promise<[IdentityClient, Storage, string]> {
   const iotaClient = new IotaClient({ url: NETWORK_URL });
   const identityClientReadOnly = await IdentityClientReadOnly.create(iotaClient);
@@ -154,7 +155,7 @@ export async function newIdentityClientFromSecretKey(
 
   let bal = await iotaClient.getBalance({ owner: identityClient.senderAddress() });
   let current = BigInt(bal.totalBalance);
-  if (current < ONE_IOTA) {
+  if (checkBalance && current < ONE_IOTA) {
     await requestFunds(identityClient.senderAddress());
     bal = await iotaClient.getBalance({ owner: identityClient.senderAddress() });
     current = BigInt(bal.totalBalance);
@@ -199,7 +200,10 @@ export async function newNotarizationClient(storage: Storage): Promise<Notarizat
   return notarizationClient;
 }
 
-export async function newNotarizationClientFromSecretKey(base64SecretKey: string) {
+export async function newNotarizationClientFromSecretKey(
+  base64SecretKey: string,
+  checkBalance: boolean = false,
+): Promise<NotarizationClient> {
   const iotaClient = new IotaClient({ url: NETWORK_URL });
   const notarizationClientReadOnly = await NotarizationClientReadOnly.create(iotaClient);
 
@@ -231,7 +235,7 @@ export async function newNotarizationClientFromSecretKey(base64SecretKey: string
 
   let bal = await iotaClient.getBalance({ owner: notarizationClient.senderAddress() });
   let current = BigInt(bal.totalBalance);
-  if (current < ONE_IOTA) {
+  if (checkBalance && current < ONE_IOTA) {
     await requestFunds(notarizationClient.senderAddress());
     bal = await iotaClient.getBalance({ owner: notarizationClient.senderAddress() });
     current = BigInt(bal.totalBalance);
