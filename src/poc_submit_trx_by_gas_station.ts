@@ -133,6 +133,29 @@ async function poc() {
 
   // issuer send vc hash value on-chain with notarization
   const notarizationClient = await newNotarizationClientFromSecretKey(ISSUER_SECRET_KEY, false);
+
+  // const notarizationPromises = Array.from({ length: 80 }, (_, iterationIndex) => {
+  //   console.log(`Creating notarization ${iterationIndex + 1} of 100`);
+  //   return (
+  //     notarizationClient
+  //       .createLocked()
+  //       .withStringState(`Test state ${Date.now()}`, `Iteration: ${iterationIndex}`)
+  //       .withDeleteLock(TimeLock.withUnlockAt(Math.round(Date.now() / 1000 + 3600)))
+  //       .withImmutableDescription('This can not be changed any more')
+  //       .withUpdatableMetadata('This can be updated')
+  //       .finish()
+  //       // .withGasBudget(BigInt(2000000000))
+  //       .executeWithGasStation(
+  //         notarizationClient,
+  //         'http://localhost:9527',
+  //         new NotarizationDefaultHttpClient(),
+  //         new NotarizationGasStationParams().withAuthToken('jian'),
+  //       )
+  //   );
+  // });
+
+  // await Promise.all(notarizationPromises);
+
   const { output: notarization } = await notarizationClient
     .createLocked()
     .withStringState(jwtPart, 'Example VC JWT part')
@@ -158,7 +181,7 @@ async function destroyNotarization(notarizationId: string): Promise<void> {
   const isDestroyAllowed = await notarizationClientReadOnly.isDestroyAllowed(notarizationId);
   console.log(`Is Notarization destroy allowed: ${isDestroyAllowed}`);
 
-  await notarizationClient
+  const { response } = await notarizationClient
     .destroy(notarizationId)
     .executeWithGasStation(
       notarizationClient,
@@ -166,7 +189,9 @@ async function destroyNotarization(notarizationId: string): Promise<void> {
       new NotarizationDefaultHttpClient(),
       new NotarizationGasStationParams().withAuthToken('jian'),
     );
+
   console.log('Notarization destroyed successfully');
+  console.log(response);
 }
 
 async function createIdentity(): Promise<[IotaDocument, string]> {
