@@ -260,3 +260,8 @@ function decodeIotaPrivateKeyToBase64Url(iotaPrivateKey: string) {
   const secretKeyBase64url = Buffer.from(secretKeyUint8Array).toString('base64url');
   console.log(secretKeyBase64url);
 }
+
+function showIotaPrivateKeyFromBase64SecretKey(base64SecretKey: string) {
+  const iotaPrivateKey = getEd25519KeypairFromBase64SecretKey(base64SecretKey).getSecretKey();
+  console.log(iotaPrivateKey);
+}
