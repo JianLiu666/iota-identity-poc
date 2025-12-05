@@ -254,3 +254,9 @@ function getEd25519KeypairFromBase64SecretKey(base64SecretKey: string): Ed25519K
   const uint8Array = Uint8Array.from(Buffer.from(base64SecretKey, 'base64url'));
   return Ed25519Keypair.fromSecretKey(uint8Array);
 }
+
+function decodeIotaPrivateKeyToBase64Url(iotaPrivateKey: string) {
+  const secretKeyUint8Array = decodeIotaPrivateKey(iotaPrivateKey).secretKey;
+  const secretKeyBase64url = Buffer.from(secretKeyUint8Array).toString('base64url');
+  console.log(secretKeyBase64url);
+}
