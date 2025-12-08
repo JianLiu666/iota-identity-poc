@@ -10,13 +10,13 @@ importers:
     dependencies:
       '@iota/identity-wasm':
         specifier: 1.7.0-beta.1
-        version: 1.7.0-beta.1(@iota/iota-sdk@1.6.1(typescript@5.9.3))
+        version: 1.7.0-beta.1(@iota/iota-sdk@1.9.0(typescript@5.9.3))
       '@iota/iota-sdk':
-        specifier: ^1.6.1
-        version: 1.6.1(typescript@5.9.3)
+        specifier: ^1.9.0
+        version: 1.9.0(typescript@5.9.3)
       '@iota/notarization':
-        specifier: ^0.1.6
-        version: 0.1.6(@iota/iota-sdk@1.6.1(typescript@5.9.3))
+        specifier: ^0.1.7
+        version: 0.1.7(@iota/iota-sdk@1.9.0(typescript@5.9.3))
     devDependencies:
       '@types/node':
         specifier: ^24.9.1
@@ -41,8 +41,8 @@ packages:
       graphql:
         optional: true
 
-  '@0no-co/graphqlsp@1.15.0':
-    resolution: {integrity: sha512-SReJAGmOeXrHGod+9Odqrz4s43liK0b2DFUetb/jmYvxFpWmeNfFYo0seCh0jz8vG3p1pnYMav0+Tm7XwWtOJw==}
+  '@0no-co/graphqlsp@1.15.1':
+    resolution: {integrity: sha512-UBDBuVGpX5Ti0PjGnSAzkMG04psNYxKfJ+1bgF8HFPfHHpKNVl4GULHSNW0GTOngcYCYA70c+InoKw0qjHwmVQ==}
     peerDependencies:
       graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
       typescript: ^5.0.0
@@ -51,8 +51,8 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@gql.tada/cli-utils@1.7.1':
-    resolution: {integrity: sha512-wg5ysZNQxtNQm67T3laVWmZzLpGb7QfyYWZdaUD2r1OjDj5Bgftq7eQlplmH+hsdffjuUyhJw/b5XAjeE2mJtg==}
+  '@gql.tada/cli-utils@1.7.2':
+    resolution: {integrity: sha512-Qbc7hbLvCz6IliIJpJuKJa9p05b2Jona7ov7+qofCsMRxHRZE1kpAmZMvL8JCI4c0IagpIlWNaMizXEQUe8XjQ==}
     peerDependencies:
       '@0no-co/graphqlsp': ^1.12.13
       '@gql.tada/svelte-support': 1.0.1
@@ -76,8 +76,8 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
 
-  '@iota/bcs@1.2.0':
-    resolution: {integrity: sha512-QdRSR0KpJ87tdjVNmM/j0+0DvE0aTxHIa02337iluaOsMqtJ8OdgUCfSyLduC/3qS+8tJE+UB1KOw55tF+sN2w==}
+  '@iota/bcs@1.4.0':
+    resolution: {integrity: sha512-Bpg8uPB3UTweJyFS3G+aycGcTCxaJQi2a9bEy2QXWMBM8a/tLN1KCg4IzKWkAJ4FyMNrZZrdXiBqAzmNK6xdVQ==}
 
   '@iota/identity-wasm@1.7.0-beta.1':
     resolution: {integrity: sha512-wB+VyLR7tqwwXdKNN6HThBu8T5OGMFYNITg3aPP9opL8TvnHQJS4HPvrSH+5zMkTXLxV8XNP24xXZbugkyIV2Q==}
@@ -91,15 +91,21 @@ packages:
     peerDependencies:
       '@iota/iota-sdk': ^1.2.0
 
-  '@iota/iota-sdk@1.6.1':
-    resolution: {integrity: sha512-V7rx7m9erCn9lr4hNZVMtwmka2NsoTZ9EFSE4ZqEDO44cWdheM61+i/y5HJhvvmYAb/kkDfSmfdmzLaGTbVVYg==}
-    engines: {node: '>=20'}
-
-  '@iota/notarization@0.1.6':
-    resolution: {integrity: sha512-EoQIrACsOckXhUZ5y1AJdOO1mPv0lkoqeX5yROH3mjDbSpzqRF0kszAN/hBwOQcopSQPiEvrH6+5E+bD5WSntw==}
+  '@iota/iota-interaction-ts@0.9.0':
+    resolution: {integrity: sha512-spOc7baucxhBGaRQi32kPGdIj8g65tHzYBG5klh+DnHz4PGQl3tkjVgimfAB4M1wIhkQU/RfURTh4ygsVggMFg==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@iota/iota-sdk': ^1.6.1
+      '@iota/iota-sdk': ^1.7.1
+
+  '@iota/iota-sdk@1.9.0':
+    resolution: {integrity: sha512-RaLv5fBmnM7G7Jnp9ntqr4yvle6QXyQn6DgJakHqBpwqs+vtinZdDiNtoyA+mhDpbhzEZ9ZSwREIOasqHtWZQA==}
+    engines: {node: '>=20'}
+
+  '@iota/notarization@0.1.7':
+    resolution: {integrity: sha512-8Jk/78fjyQ8xkhRc2U7VpeavKUvpKjXK1i3qYVKYIZAzAVeDPTFp4ck6IzF7OsS5MIpr3yEzNtjiItRftfsa5w==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@iota/iota-sdk': ^1.7.1
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -229,8 +235,8 @@ packages:
     resolution: {integrity: sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==}
     engines: {node: '>= 0.4'}
 
-  form-data@4.0.4:
-    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
+  form-data@4.0.5:
+    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
     engines: {node: '>= 6'}
 
   function-bind@1.1.2:
@@ -248,14 +254,14 @@ packages:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
 
-  gql.tada@1.8.13:
-    resolution: {integrity: sha512-fYoorairdPgxtE7Sf1X9/6bSN9Kt2+PN8KLg3hcF8972qFnawwUgs1OLVU8efZMHwL7EBHhhKBhrsGPlOs2lZQ==}
+  gql.tada@1.9.0:
+    resolution: {integrity: sha512-1LMiA46dRs5oF7Qev6vMU32gmiNvM3+3nHoQZA9K9j2xQzH8xOAWnnJrLSbZOFHTSdFxqn86TL6beo1/7ja/aA==}
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
 
-  graphql@16.11.0:
-    resolution: {integrity: sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==}
+  graphql@16.12.0:
+    resolution: {integrity: sha512-DKKrynuQRne0PNpEbzuEdHlYOMksHSUI8Zc9Unei5gTsMNA2/vMpoMz/yKba50pejK56qj98qM0SjYxAKi13gQ==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   has-symbols@1.1.0:
@@ -348,46 +354,46 @@ packages:
 
 snapshots:
 
-  '@0no-co/graphql.web@1.2.0(graphql@16.11.0)':
+  '@0no-co/graphql.web@1.2.0(graphql@16.12.0)':
     optionalDependencies:
-      graphql: 16.11.0
+      graphql: 16.12.0
 
-  '@0no-co/graphqlsp@1.15.0(graphql@16.11.0)(typescript@5.9.3)':
+  '@0no-co/graphqlsp@1.15.1(graphql@16.12.0)(typescript@5.9.3)':
     dependencies:
-      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@5.9.3)
-      graphql: 16.11.0
+      '@gql.tada/internal': 1.0.8(graphql@16.12.0)(typescript@5.9.3)
+      graphql: 16.12.0
       typescript: 5.9.3
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@gql.tada/cli-utils@1.7.1(@0no-co/graphqlsp@1.15.0(graphql@16.11.0)(typescript@5.9.3))(graphql@16.11.0)(typescript@5.9.3)':
+  '@gql.tada/cli-utils@1.7.2(@0no-co/graphqlsp@1.15.1(graphql@16.12.0)(typescript@5.9.3))(graphql@16.12.0)(typescript@5.9.3)':
     dependencies:
-      '@0no-co/graphqlsp': 1.15.0(graphql@16.11.0)(typescript@5.9.3)
-      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@5.9.3)
-      graphql: 16.11.0
+      '@0no-co/graphqlsp': 1.15.1(graphql@16.12.0)(typescript@5.9.3)
+      '@gql.tada/internal': 1.0.8(graphql@16.12.0)(typescript@5.9.3)
+      graphql: 16.12.0
       typescript: 5.9.3
 
-  '@gql.tada/internal@1.0.8(graphql@16.11.0)(typescript@5.9.3)':
+  '@gql.tada/internal@1.0.8(graphql@16.12.0)(typescript@5.9.3)':
     dependencies:
-      '@0no-co/graphql.web': 1.2.0(graphql@16.11.0)
-      graphql: 16.11.0
+      '@0no-co/graphql.web': 1.2.0(graphql@16.12.0)
+      graphql: 16.12.0
       typescript: 5.9.3
 
-  '@graphql-typed-document-node/core@3.2.0(graphql@16.11.0)':
+  '@graphql-typed-document-node/core@3.2.0(graphql@16.12.0)':
     dependencies:
-      graphql: 16.11.0
+      graphql: 16.12.0
 
-  '@iota/bcs@1.2.0':
+  '@iota/bcs@1.4.0':
     dependencies:
       bs58: 6.0.0
 
-  '@iota/identity-wasm@1.7.0-beta.1(@iota/iota-sdk@1.6.1(typescript@5.9.3))':
+  '@iota/identity-wasm@1.7.0-beta.1(@iota/iota-sdk@1.9.0(typescript@5.9.3))':
     dependencies:
-      '@iota/iota-interaction-ts': 0.8.0(@iota/iota-sdk@1.6.1(typescript@5.9.3))
-      '@iota/iota-sdk': 1.6.1(typescript@5.9.3)
-      '@iota/notarization': 0.1.6(@iota/iota-sdk@1.6.1(typescript@5.9.3))
+      '@iota/iota-interaction-ts': 0.8.0(@iota/iota-sdk@1.9.0(typescript@5.9.3))
+      '@iota/iota-sdk': 1.9.0(typescript@5.9.3)
+      '@iota/notarization': 0.1.7(@iota/iota-sdk@1.9.0(typescript@5.9.3))
       '@noble/ed25519': 1.7.5
       '@noble/hashes': 1.8.0
       '@noble/post-quantum': 0.2.1
@@ -398,14 +404,18 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@iota/iota-interaction-ts@0.8.0(@iota/iota-sdk@1.6.1(typescript@5.9.3))':
+  '@iota/iota-interaction-ts@0.8.0(@iota/iota-sdk@1.9.0(typescript@5.9.3))':
     dependencies:
-      '@iota/iota-sdk': 1.6.1(typescript@5.9.3)
+      '@iota/iota-sdk': 1.9.0(typescript@5.9.3)
 
-  '@iota/iota-sdk@1.6.1(typescript@5.9.3)':
+  '@iota/iota-interaction-ts@0.9.0(@iota/iota-sdk@1.9.0(typescript@5.9.3))':
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
-      '@iota/bcs': 1.2.0
+      '@iota/iota-sdk': 1.9.0(typescript@5.9.3)
+
+  '@iota/iota-sdk@1.9.0(typescript@5.9.3)':
+    dependencies:
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.12.0)
+      '@iota/bcs': 1.4.0
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
@@ -413,8 +423,8 @@ snapshots:
       '@suchipi/femver': 1.0.0
       bech32: 2.0.0
       bignumber.js: 9.3.1
-      gql.tada: 1.8.13(graphql@16.11.0)(typescript@5.9.3)
-      graphql: 16.11.0
+      gql.tada: 1.9.0(graphql@16.12.0)(typescript@5.9.3)
+      graphql: 16.12.0
       tweetnacl: 1.0.3
       valibot: 0.36.0
     transitivePeerDependencies:
@@ -422,10 +432,10 @@ snapshots:
       - '@gql.tada/vue-support'
       - typescript
 
-  '@iota/notarization@0.1.6(@iota/iota-sdk@1.6.1(typescript@5.9.3))':
+  '@iota/notarization@0.1.7(@iota/iota-sdk@1.9.0(typescript@5.9.3))':
     dependencies:
-      '@iota/iota-interaction-ts': 0.8.0(@iota/iota-sdk@1.6.1(typescript@5.9.3))
-      '@iota/iota-sdk': 1.6.1(typescript@5.9.3)
+      '@iota/iota-interaction-ts': 0.9.0(@iota/iota-sdk@1.9.0(typescript@5.9.3))
+      '@iota/iota-sdk': 1.9.0(typescript@5.9.3)
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -476,7 +486,7 @@ snapshots:
   '@types/node-fetch@2.6.13':
     dependencies:
       '@types/node': 24.9.1
-      form-data: 4.0.4
+      form-data: 4.0.5
 
   '@types/node@24.9.1':
     dependencies:
@@ -540,7 +550,7 @@ snapshots:
       has-tostringtag: 1.0.2
       hasown: 2.0.2
 
-  form-data@4.0.4:
+  form-data@4.0.5:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
@@ -570,19 +580,19 @@ snapshots:
 
   gopd@1.2.0: {}
 
-  gql.tada@1.8.13(graphql@16.11.0)(typescript@5.9.3):
+  gql.tada@1.9.0(graphql@16.12.0)(typescript@5.9.3):
     dependencies:
-      '@0no-co/graphql.web': 1.2.0(graphql@16.11.0)
-      '@0no-co/graphqlsp': 1.15.0(graphql@16.11.0)(typescript@5.9.3)
-      '@gql.tada/cli-utils': 1.7.1(@0no-co/graphqlsp@1.15.0(graphql@16.11.0)(typescript@5.9.3))(graphql@16.11.0)(typescript@5.9.3)
-      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@5.9.3)
+      '@0no-co/graphql.web': 1.2.0(graphql@16.12.0)
+      '@0no-co/graphqlsp': 1.15.1(graphql@16.12.0)(typescript@5.9.3)
+      '@gql.tada/cli-utils': 1.7.2(@0no-co/graphqlsp@1.15.1(graphql@16.12.0)(typescript@5.9.3))(graphql@16.12.0)(typescript@5.9.3)
+      '@gql.tada/internal': 1.0.8(graphql@16.12.0)(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
       - graphql
 
-  graphql@16.11.0: {}
+  graphql@16.12.0: {}
 
   has-symbols@1.1.0: {}
 
