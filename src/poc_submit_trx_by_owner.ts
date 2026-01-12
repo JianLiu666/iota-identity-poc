@@ -1,22 +1,19 @@
-import { decodeIotaPrivateKey } from '@iota/iota-sdk/cryptography';
-import { Ed25519Keypair } from '@iota/iota-sdk/keypairs/ed25519';
 import {
   createDocumentWithKey,
+  getIdentity,
   newIdentityClientFromSecretKey,
   newNotarizationClientFromSecretKey,
+  newSecretKey,
 } from './util';
 import {
   Credential,
   IdentityClient,
-  IotaDID,
   IotaDocument,
   JwsSignatureOptions,
   RevocationBitmap,
   SdJwt,
   SdObjectEncoder,
   Service,
-  Storage,
-  MethodDigest,
   LinkedDomainService,
 } from '@iota/identity-wasm/node';
 
@@ -153,7 +150,7 @@ async function destroyNotarization(notarizationId: string): Promise<void> {
 }
 
 async function createIdentity(): Promise<[IotaDocument, string]> {
-  const secretKey = generateSecretKey();
+  const secretKey = newSecretKey();
   console.log(`Secret key: ${secretKey}`);
 
   const [client, storage] = await newIdentityClientFromSecretKey(secretKey, true);
@@ -172,13 +169,6 @@ async function createIdentity(): Promise<[IotaDocument, string]> {
   console.log(`Resolved document: ${JSON.stringify(resolved, null, 2)}`);
 
   return [document, fragment];
-}
-
-function generateSecretKey(): string {
-  const iotaPrivateKey = Ed25519Keypair.generate().getSecretKey();
-  const secretKeyUint8Array = decodeIotaPrivateKey(iotaPrivateKey).secretKey;
-  const secretKeyBase64url = Buffer.from(secretKeyUint8Array).toString('base64url');
-  return secretKeyBase64url;
 }
 
 async function createRevocationBitmapService(
@@ -230,21 +220,6 @@ async function createLinkedDomainService(client: IdentityClient, document: IotaD
     .updateDidDocument(document, controllerToken!)
     .withGasBudget(BigInt(50_000_000))
     .buildAndExecute(client);
-}
-
-async function getIdentity(
-  base64SecretKey: string,
-  did: string,
-): Promise<[IdentityClient, Storage, IotaDocument, string]> {
-  const [client, storage, keyId] = await newIdentityClientFromSecretKey(base64SecretKey, true);
-  const document = await client.resolveDid(IotaDID.parse(did));
-
-  const method = document.methods()[0];
-  const methodFragment = method.id().fragment()!;
-  const methodDigest = new MethodDigest(method);
-  await storage.keyIdStorage().insertKeyId(methodDigest, keyId);
-
-  return [client, storage, document, methodFragment];
 }
 
 poc().catch((error) => {

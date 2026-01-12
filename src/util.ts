@@ -15,6 +15,7 @@ import {
   EdCurve,
   JwkOperation,
   VerificationMethod,
+  IotaDID,
 } from '@iota/identity-wasm/node';
 import { getNetwork, IotaClient, Network } from '@iota/iota-sdk/client';
 import { getFaucetHost, requestIotaFromFaucetV0 } from '@iota/iota-sdk/faucet';
@@ -36,6 +37,13 @@ export async function requestFunds(address: string) {
 
 export function newMemStorage(): Storage {
   return new Storage(new JwkMemStore(), new KeyIdMemStore());
+}
+
+export function newSecretKey(): string {
+  const iotaPrivateKey = Ed25519Keypair.generate().getSecretKey();
+  const secretKeyUint8Array = decodeIotaPrivateKey(iotaPrivateKey).secretKey;
+  const secretKeyBase64url = Buffer.from(secretKeyUint8Array).toString('base64url');
+  return secretKeyBase64url;
 }
 
 export async function createDocument(storage: Storage): Promise<[IotaDocument, string]> {
@@ -249,6 +257,21 @@ export async function newNotarizationClientFromSecretKey(
   );
 
   return notarizationClient;
+}
+
+export async function getIdentity(
+  base64SecretKey: string,
+  did: string,
+): Promise<[IdentityClient, Storage, IotaDocument, string]> {
+  const [client, storage, keyId] = await newIdentityClientFromSecretKey(base64SecretKey, false);
+  const document = await client.resolveDid(IotaDID.parse(did));
+
+  const method = document.methods()[0];
+  const methodFragment = method.id().fragment()!;
+  const methodDigest = new MethodDigest(method);
+  await storage.keyIdStorage().insertKeyId(methodDigest, keyId);
+
+  return [client, storage, document, methodFragment];
 }
 
 function getEd25519KeypairFromBase64SecretKey(base64SecretKey: string): Ed25519Keypair {
