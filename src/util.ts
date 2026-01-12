@@ -21,6 +21,7 @@ import { getFaucetHost, requestIotaFromFaucetV0 } from '@iota/iota-sdk/faucet';
 import { NotarizationClient, NotarizationClientReadOnly } from '@iota/notarization/node';
 import { Ed25519Keypair } from '@iota/iota-sdk/keypairs/ed25519';
 import { decodeIotaPrivateKey } from '@iota/iota-sdk/cryptography';
+import { createHash } from 'crypto';
 
 export const NETWORK = Network.Testnet;
 export const NETWORK_URL = getNetwork(NETWORK).url;
@@ -264,4 +265,24 @@ function decodeIotaPrivateKeyToBase64Url(iotaPrivateKey: string) {
 function showIotaPrivateKeyFromBase64SecretKey(base64SecretKey: string) {
   const iotaPrivateKey = getEd25519KeypairFromBase64SecretKey(base64SecretKey).getSecretKey();
   console.log(iotaPrivateKey);
+}
+
+function showJwkFromBase64SecretKey(base64SecretKey: string) {
+  const keypair = getEd25519KeypairFromBase64SecretKey(base64SecretKey);
+  const { secretKey } = decodeIotaPrivateKey(keypair.getSecretKey());
+  const publicKey = keypair.getPublicKey().toRawBytes();
+
+  const hash = createHash('sha256').update(Buffer.from(publicKey)).digest();
+  const kid = hash.toString('base64url');
+
+  const jwk = new Jwk({
+    use: JwkUse.Signature,
+    kty: JwkType.Okp,
+    kid: kid,
+    crv: EdCurve.Ed25519,
+    alg: JwsAlgorithm.EdDSA,
+    x: Buffer.from(publicKey).toString('base64url'),
+    d: Buffer.from(secretKey).toString('base64url'),
+  });
+  console.log(JSON.stringify(jwk, null, 2));
 }
