@@ -72,7 +72,7 @@ async function createSdJwt() {
 
   // In Order to create an selective disclosure JWT, the plain text JWT
   // claims set must be created first.
-  let payload = credential.toJwtClaims();
+  let payload = credential.toJwtClaims({ vct: 'http://example.com/credentials/3732' });
 
   // The issuer can make all or subset of the claims selectively disclosable.
   let encoder = new SdObjectEncoder(payload);
