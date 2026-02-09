@@ -309,3 +309,9 @@ function showJwkFromBase64SecretKey(base64SecretKey: string) {
   });
   console.log(JSON.stringify(jwk, null, 2));
 }
+
+function generatePublicKeyFromBase64SecretKey(base64SecretKey: string) {
+  const keypair = getEd25519KeypairFromBase64SecretKey(base64SecretKey);
+  const publicKey = keypair.getPublicKey().toRawBytes();
+  console.log(Buffer.from(publicKey).toString('base64url'));
+}
