@@ -17,6 +17,9 @@ importers:
       '@iota/notarization':
         specifier: ^0.1.7
         version: 0.1.7(@iota/iota-sdk@1.9.0(typescript@5.9.3))
+      bs58:
+        specifier: ^6.0.0
+        version: 6.0.0
     devDependencies:
       '@types/node':
         specifier: ^24.9.1
