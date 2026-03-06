@@ -1,4 +1,4 @@
-import { newIdentityClient, newMemStorage, createDocument } from '../util';
+import { newIdentityClient, newMemStorage, createDocument } from '../../util';
 import { IotaDID } from '@iota/identity-wasm/node';
 
 async function createIdentity(): Promise<void> {

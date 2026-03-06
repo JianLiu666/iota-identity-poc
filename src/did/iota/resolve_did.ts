@@ -1,4 +1,4 @@
-import { createDocument, newIdentityClient, newMemStorage } from '../util';
+import { createDocument, newIdentityClient, newMemStorage } from '../../util';
 
 async function resolveIdentity() {
   const storage = newMemStorage();

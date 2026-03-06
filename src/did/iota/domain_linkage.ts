@@ -13,7 +13,7 @@ import {
   LinkedDomainService,
   Timestamp,
 } from '@iota/identity-wasm/node';
-import { createDocument, newIdentityClient, newMemStorage } from '../util';
+import { createDocument, newIdentityClient, newMemStorage } from '../../util';
 
 async function domainLinkage() {
   // create new client that offers identity related functions
