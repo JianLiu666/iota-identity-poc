@@ -185,6 +185,7 @@ async function main() {
   const requestObjectJwt = await getRequestObjectJwt(parsedRequest.request_uri);
   const decodedReqObj = decodeJwt(requestObjectJwt);
 
+  console.log(`Request Object JWT: ${requestObjectJwt}\n`);
   console.log(`Request Object header: ${JSON.stringify(decodedReqObj.header, null, 2)}\n`);
   console.log(`Request Object payload: ${JSON.stringify(decodedReqObj.payload, null, 2)}\n`);
 
@@ -555,6 +556,7 @@ async function submitVpTokenDcSdJwt(
   };
 
   console.log(`Presentation Submission: ${JSON.stringify(presentationSubmission, null, 2)}\n`);
+  console.log(`VP Token: ${vpToken}\n`);
 
   const body = new URLSearchParams({
     vp_token: vpToken,
