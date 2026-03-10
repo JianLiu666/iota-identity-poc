@@ -272,7 +272,7 @@ function createVPJwt(
     nonce: nonce,
     iss: holder.didKey,
     iat: Math.floor(Date.now() / 1000),
-    sub: holder.didKey, // Add sub as holder did
+    sub: holder.didKey,
   };
 
   const signingInput =
